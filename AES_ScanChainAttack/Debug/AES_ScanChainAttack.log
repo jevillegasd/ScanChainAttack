@@ -1,4 +1,7 @@
-﻿  AES_ScanChainAttack.cpp
+﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(459,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (AES_ScanChainAttack.vcxproj).  This can lead to incorrect clean and rebuild behavior.
+  ScanChainAttack.cpp
 C:\Users\jev1\Documents\Repositories\NYU_HARD_SEC\ScanChainAttack\AES_ScanChainAttack\AES.cpp(318,1): warning C4005: 'Multiply': macro redefinition
 C:\Users\jev1\Documents\Repositories\NYU_HARD_SEC\ScanChainAttack\AES_ScanChainAttack\AES.h(128): message : see previous definition of 'Multiply'
-  AES_ScanChainAttack.vcxproj -> C:\Users\jev1\Documents\Repositories\NYU_HARD_SEC\ScanChainAttack\AES_ScanChainAttack\Debug\AES_ScanChainAttack.exe
+C:\Users\jev1\Documents\Repositories\NYU_HARD_SEC\ScanChainAttack\AES_ScanChainAttack\ScanChainAttack.cpp(39,15): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+C:\Users\jev1\Documents\Repositories\NYU_HARD_SEC\ScanChainAttack\AES_ScanChainAttack\ScanChainAttack.cpp(137,16): warning C4477: 'printf' : format string '%.2x' requires an argument of type 'unsigned int', but variadic argument 1 has type 'uint8_t []'
+  AES_ScanChainAttack.vcxproj -> C:\Users\jev1\Documents\Repositories\NYU_HARD_SEC\ScanChainAttack\AES_ScanChainAttack\Debug\ScanChainAttack.exe
