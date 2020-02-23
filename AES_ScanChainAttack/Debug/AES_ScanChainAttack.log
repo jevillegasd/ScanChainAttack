@@ -1,2 +1,6 @@
 ﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(459,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (AES_ScanChainAttack.vcxproj).  This can lead to incorrect clean and rebuild behavior.
+  ScanChainAttack.cpp
+C:\Users\jev1\Documents\Repositories\NYU_HARD_SEC\ScanChainAttack\AES_ScanChainAttack\AES.cpp(319,1): warning C4005: 'Multiply': macro redefinition
+C:\Users\jev1\Documents\Repositories\NYU_HARD_SEC\ScanChainAttack\AES_ScanChainAttack\AES.h(128): message : see previous definition of 'Multiply'
+C:\Users\jev1\Documents\Repositories\NYU_HARD_SEC\ScanChainAttack\AES_ScanChainAttack\ScanChainAttack.cpp(162,15): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
   AES_ScanChainAttack.vcxproj -> C:\Users\jev1\Documents\Repositories\NYU_HARD_SEC\ScanChainAttack\AES_ScanChainAttack\Debug\ScanChainAttack.exe

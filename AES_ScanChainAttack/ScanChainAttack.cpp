@@ -3,6 +3,7 @@
 
 //#define _PRINT_CIPHER
 //#define _PRINT_SCAN
+#define _PRINT_ATTACK
 
 #include <iostream>
 #include <chrono>
@@ -10,7 +11,6 @@
 
 #include"ScanChainAttack.h"
 #include"AES.cpp"
-
 
 using namespace std;
 
@@ -24,9 +24,9 @@ int main()
                                (uint8_t)0x30, (uint8_t)0xc8, (uint8_t)0x1c, (uint8_t)0x46, (uint8_t)0xa3, (uint8_t)0x5c, (uint8_t)0xe4, (uint8_t)0x11, (uint8_t)0xe5, (uint8_t)0xfb, (uint8_t)0xc1, (uint8_t)0x19, (uint8_t)0x1a, (uint8_t)0x0a, (uint8_t)0x52, (uint8_t)0xef,
                                (uint8_t)0xf6, (uint8_t)0x9f, (uint8_t)0x24, (uint8_t)0x45, (uint8_t)0xdf, (uint8_t)0x4f, (uint8_t)0x9b, (uint8_t)0x17, (uint8_t)0xad, (uint8_t)0x2b, (uint8_t)0x41, (uint8_t)0x7b, (uint8_t)0xe6, (uint8_t)0x6c, (uint8_t)0x37, (uint8_t)0x10 };
     */
-    uint8_t plain_text[64] = "This is a secret nobody can know, please don't tell anyone.";
-    uint8_t cipher_text[64] ="";
-    uint8_t test_text[64] = "";
+    uint8_t plain_text[64]  = "This is a secret nobody can know, please don't tell anyone o.k?";
+    uint8_t cipher_text[64] = "";
+    uint8_t test_text[64]   = "";
 
     int text_length = sizeof(plain_text) / sizeof(uint8_t);
 
@@ -39,22 +39,28 @@ int main()
 
     uint8_t guess_key[16];
     attack(guess_key, ctx);
-    cout << "\nGuess Key :\n"; phex(guess_key, 16);
+    std::cout << "\nGuess Key :"; phex(guess_key, 16);
+    
+    
     //----------- Lets test what we got:
-
-    copy(begin(plain_text), end(plain_text), begin(cipher_text));
+    std::cout << "\n\nRunning test...";
+    std::cout << "\nOriginal Text: (STR ) " << plain_text;
+    std::copy(begin(plain_text), std::end(plain_text), std::begin(cipher_text));
     for (uint8_t i = 0; i < text_length/16; ++i)
         AES_ECB_encrypt(&ctx, cipher_text + (i * 16));    //Encrypts a cipher text. plain_text now is encrypted and "safe"
     
-    copy(begin(cipher_text), end(cipher_text), begin(test_text));
+    std::cout << "\nCipher Text  : (0x16)";  phex(cipher_text, text_length);
+    //printf((char*) cipher_text);
+
+    std::copy(begin(cipher_text), std::end(cipher_text), std::begin(test_text));
 
     struct AES_ctx ctx2;                                //Malicous AES machine with the found key
     AES_init_ctx(&ctx2, guess_key);
     for (uint8_t i = 0; i < text_length/16; ++i)
         AES_ECB_decrypt(&ctx, test_text + (i * 16));
     
-    cout << "\nOriginal Text: " << plain_text;
-    cout << "\nHacked Text  : " << test_text;
+    
+    std::cout << "\nHacked Text  : (STR )  " << test_text;
     //cout << "\nCipher Text  : " << cipher_text; //Somehow this is printing also values from other variables
 
     
@@ -71,11 +77,11 @@ void buildKey(uint8_t key[], vector<scan> scan_options, uint16_t index, int inde
     }
 }
 
-void attack(uint8_t trial_key[], AES_ctx ctx) {
+bool attack(uint8_t trial_key[], AES_ctx ctx) {
     auto start = std::chrono::system_clock::now();
    
     vector<scan> scan_options;
-    cout << "\nStarting attack.";
+    std::cout << "\nStarting attack.";
 
     uint8_t plain_text[16] = { 0x6b, 0xc1, 0xbe, 0xe2, 0x2e, 0x40, 0x9f, 0x96, 0xe9, 0x3d, 0x7e, 0x11, 0x73, 0x93, 0x17, 0x2a };
     int text_length = sizeof(plain_text) / sizeof(uint8_t);
@@ -84,17 +90,22 @@ void attack(uint8_t trial_key[], AES_ctx ctx) {
 
     scan_options = scan_data(ctx);       // First we get all possible keys scanning through the AES machine
     AES_ECB_encrypt(&ctx, cipher_text);  // We encrypt a known text and save the result.
+    int maxi = 1 << 16, i0; //Same as 2^16
+    i0 = (rand() * 2) % maxi;
 
-    cout << "\nFound all possible key words. Attempting brute force through all combinations.";
+    std::cout << "\nFound all possible key words. Attempting brute force through all combinations.";
+    std::cout << "\nSeed: " << i0;
     //Now we need to brute force through all the key options (2^16) and the 
+
     for (int i2 = 0; i2 < 2; i2++) { //Not really necessary
-        for (int i = 0; i < 65536; i++) {
+        for (int i = 0; i < maxi; i++) {
+            int index = (i + i0) % maxi;    //We add the random i0 to add statistical relevance
             uint8_t temp_cipher_text[16];
             copy(std::begin(cipher_text), std::end(cipher_text), begin(temp_cipher_text));
 
             //uint8_t trial_key[16] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
-            buildKey(trial_key, scan_options, (uint16_t)i, i2);
+            buildKey(trial_key, scan_options, (uint16_t)index, i2);
             //cout << "\nTrying key "; phex(trial_key, 16);
 
             struct AES_ctx ctx2;
@@ -104,10 +115,12 @@ void attack(uint8_t trial_key[], AES_ctx ctx) {
             bool stat = compare(plain_text, temp_cipher_text, text_length);
             
             if (stat) {
-                cout << "\nMatch found on trial " << i2 * 65536 + i;
-                cout << "\nPlain Text :"; phex(plain_text, 16);
-                cout << "\nGuess Text :"; phex(temp_cipher_text, 16);
-                cout << "\nFound key "; phex(trial_key, 16);
+
+#ifdef _PRINT_ATTACK
+                std::cout << "\nMatch found on trial " << i2 * 65536 + i;
+                std::cout << "\nFound using plain Text :"; phex(plain_text, 16);
+                std::cout << "\nFinal attempeted guess :"; phex(temp_cipher_text, 16);
+                std::cout << "\nRecovered key          :"; phex(trial_key, 16);
 
                 auto end = std::chrono::system_clock::now();
                 std::chrono::duration<double> elapsed_seconds = end - start;
@@ -115,13 +128,15 @@ void attack(uint8_t trial_key[], AES_ctx ctx) {
 
                 char str[26];
                 ctime_s(str, sizeof str, &end_time);
-                cout << "\nFinished computation at " << str
-                         << "elapsed time: " << elapsed_seconds.count() << "s\n";
-                return;
+                std::cout << "\nFinished computation at " << str
+                          << "\nElapsed time: " << elapsed_seconds.count() << "s.";
+#endif
+                return 1;
             }
         }
     }
-    cout << "\nUnable to find the key.";
+    std::cout << "\nUnable to find the key.";
+    return 0;
 }
 
 bool compare(uint8_t str01[], uint8_t str02[], int length) {
@@ -151,9 +166,10 @@ std::vector<struct scan> scan_data(struct AES_ctx ctx) {
             int count_t;
             scan result;
             for (count_t = 0; count_t < 127; count_t++) {
-                copy(begin(ui8_str00), end(ui8_str00), begin(ui8_str01));
-                copy(begin(ui8_str00), end(ui8_str00), begin(ui8_str02));
-                result.s_input[0] = ((count_t) % 127) * 2;  result.s_input[1] = result.s_input[0]+1;
+                std::copy(begin(ui8_str00), std::end(ui8_str00), std::begin(ui8_str01));
+                std::copy(begin(ui8_str00), std::end(ui8_str00), std::begin(ui8_str02));
+                result.s_input[0] = ((count_t+ t0) % 127) * 2; //Use use the random generated t0 add statistic relevance to our finding process
+                result.s_input[1] = result.s_input[0]+1;
 
                 ui8_str01[i * 4 + j] = result.s_input[0];
                 ui8_str02[i * 4 + j] = result.s_input[1];
@@ -232,8 +248,11 @@ void phex(uint8_t str[], int len)
     if (len ==1)
         printf("%.2x", (int) str);
     else
-        for (int i = 0; i < len; ++i)
+        for (int i = 0; i < len; ++i) {
+            if (i%16 == 0)
+                cout << "\n\t\t\t";
             printf("%.2x", str[i]);
+        }
 
 }
 

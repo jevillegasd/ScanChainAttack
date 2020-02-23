@@ -12,12 +12,12 @@
 	void phex(uint8_t* str, int len);
 
 	void test1(struct AES_ctx ctx, uint8_t* plain_text, int length);
-	void test2(struct AES_ctx ctx);
-	void attack(uint8_t trial_key[], AES_ctx ctx);
+	void test2(struct AES_ctx ctx);	
 	void XOR(uint8_t outArr[], uint8_t byteArr1[], uint8_t byteArr2[]);
 	int countbits(uint8_t str[], int length);
-	bool compare(uint8_t str01[], uint8_t str02[], int length);
 
+	bool compare(uint8_t str01[], uint8_t str02[], int length);
+	bool attack(uint8_t trial_key[], AES_ctx ctx);
 
 	struct scan{
 		uint8_t s_input[2];
