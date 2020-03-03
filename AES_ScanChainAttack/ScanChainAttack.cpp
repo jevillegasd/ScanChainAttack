@@ -8,15 +8,41 @@
 #include <iostream>
 #include <chrono>
 #include <time.h> 
-
+#include <windows.h>
 #include"ScanChainAttack.h"
 #include"AES.cpp"
 
 using namespace std;
+void scanAttack_top();
+void comm();
 
 int main()
 {
-    struct AES_ctx ctx;
+    //scanAttack_top();
+
+    
+
+    return 0;
+}
+
+//typedef void* HANDLE;
+HANDLE m_hCommPort = ::CreateFileA(
+    "USB2",
+    GENERIC_READ | GENERIC_WRITE,  // access ( read and write)
+    0,                           // (share) 0:cannot share the COM port
+    0,                           // security  (None)
+    OPEN_EXISTING,               // creation : open_existing
+    FILE_FLAG_OVERLAPPED,        // we want overlapped operation
+    0                            // no templates file for COM port...
+);
+
+void comm() {
+    
+}
+
+
+void scanAttack_top(){
+    struct AES_ctx ctx, ctx2; //AES machine key, ctx2 is configurerd with the found key (malicious)
     uint8_t key[16] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
     //uint8_t key[16] = {0x2F, 0x7e, 0x15, 0x16, 0x28, 0xae, 0xAA, 0xa6, 0xab, 0xf7, 0x15, 0xFF, 0x09, 0xcf, 0x4f, 0x3c };
     /*uint8_t plain_text[64] = { 0x6b, 0xc1, 0xbe, 0xe2, 0x2e, 0x40, 0x9f, 0x96, 0xe9, 0x3d, 0x7e, 0x11, 0x73, 0x93, 0x17, 0x2a,// };
@@ -24,49 +50,43 @@ int main()
                                (uint8_t)0x30, (uint8_t)0xc8, (uint8_t)0x1c, (uint8_t)0x46, (uint8_t)0xa3, (uint8_t)0x5c, (uint8_t)0xe4, (uint8_t)0x11, (uint8_t)0xe5, (uint8_t)0xfb, (uint8_t)0xc1, (uint8_t)0x19, (uint8_t)0x1a, (uint8_t)0x0a, (uint8_t)0x52, (uint8_t)0xef,
                                (uint8_t)0xf6, (uint8_t)0x9f, (uint8_t)0x24, (uint8_t)0x45, (uint8_t)0xdf, (uint8_t)0x4f, (uint8_t)0x9b, (uint8_t)0x17, (uint8_t)0xad, (uint8_t)0x2b, (uint8_t)0x41, (uint8_t)0x7b, (uint8_t)0xe6, (uint8_t)0x6c, (uint8_t)0x37, (uint8_t)0x10 };
     */
-    uint8_t plain_text[64]  = "This is a secret nobody can know, please don't tell anyone o.k?";
+    //uint8_t plain_text[64]  = "This is a secret nobody can know, please don't tell anyone o.k?";
+    uint8_t plain_text[16] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
     uint8_t cipher_text[64] = "";
-    uint8_t test_text[64]   = "";
-
+    uint8_t test_text[64] = "";
     int text_length = sizeof(plain_text) / sizeof(uint8_t);
 
-    std::cout << "AES Scan Chain Attack.\n";
-    std::cout << "\nShort key: "; phex(key, sizeof(key) / sizeof(uint8_t));
     AES_init_ctx(&ctx, key);
-    std::cout << "\nRound key: "; phex(ctx.RoundKey, sizeof(ctx.RoundKey) / sizeof(uint8_t));
-    
-    //test2(ctx);               //Runs two example input text through 1 AES cycle of the AES machine ctx
-
     uint8_t guess_key[16];
     attack(guess_key, ctx);
+
+#ifdef _PRINT_ATTACK 
+    std::cout << "AES Scan Chain Attack.\n";
+    std::cout << "\nShort key: "; phex(key, sizeof(key) / sizeof(uint8_t));
+    std::cout << "\nRound key: "; phex(ctx.RoundKey, sizeof(ctx.RoundKey) / sizeof(uint8_t));
     std::cout << "\nGuess Key :"; phex(guess_key, 16);
-    
-    
+#endif
+
     //----------- Lets test what we got:
-    std::cout << "\n\nRunning test...";
-    std::cout << "\nOriginal Text: (STR ) " << plain_text;
+    
+
     std::copy(begin(plain_text), std::end(plain_text), std::begin(cipher_text));
-    for (uint8_t i = 0; i < text_length/16; ++i)
+    for (uint8_t i = 0; i < text_length / 16; ++i)
         AES_ECB_encrypt(&ctx, cipher_text + (i * 16));    //Encrypts a cipher text. plain_text now is encrypted and "safe"
-    
-    std::cout << "\nCipher Text  : (0x16)";  phex(cipher_text, text_length);
-    //printf((char*) cipher_text);
-
     std::copy(begin(cipher_text), std::end(cipher_text), std::begin(test_text));
-
-    struct AES_ctx ctx2;                                //Malicous AES machine with the found key
+ 
     AES_init_ctx(&ctx2, guess_key);
-    for (uint8_t i = 0; i < text_length/16; ++i)
+    for (uint8_t i = 0; i < text_length / 16; ++i)
         AES_ECB_decrypt(&ctx, test_text + (i * 16));
-    
-    
+
+#ifdef _PRINT_ATTACK 
+    std::cout << "\n\nRunning test...";
+    std::cout << "\nOriginal Text: (STR )"; phex(plain_text, text_length);
+    std::cout << "\nCipher Text  : (0x16)";  phex(cipher_text, text_length);
     std::cout << "\nHacked Text  : (STR )  " << test_text;
-    //cout << "\nCipher Text  : " << cipher_text; //Somehow this is printing also values from other variables
-
-    
-
-    return 0;
+#endif
 }
+
 
 void buildKey(uint8_t key[], vector<scan> scan_options, uint16_t index, int index2) {
     //uint8_t key[16];
