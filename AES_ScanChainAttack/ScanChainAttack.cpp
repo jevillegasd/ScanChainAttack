@@ -2,9 +2,10 @@
 //Degubgging Macros
 
 //#define _PRINT_CIPHER
-//#define _PRINT_SCAN
+#define _PRINT_SCAN
 //#define _PRINT_BRUTE
 #define _PRINT_ATTACK
+#define _PRINT_TEST
 
 #define STRICT
 #define WIN32_LEAN_AND_MEAN
@@ -51,14 +52,9 @@ void scanAttack_top(){
     //AES_ctx ctx, ctx2; //AES machine key, ctx2 is configurerd with the found key (malicious)
     //uint8_t key[16] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
     uint8_t key[16] = {0x2F, 0x7e, 0x15, 0x16, 0x28, 0xae, 0xAA, 0xa6, 0xab, 0xf7, 0x15, 0xFF, 0x09, 0xcf, 0x4f, 0x3c};
-    /*uint8_t plain_text[64] = { 0x6b, 0xc1, 0xbe, 0xe2, 0x2e, 0x40, 0x9f, 0x96, 0xe9, 0x3d, 0x7e, 0x11, 0x73, 0x93, 0x17, 0x2a,// };
-                               (uint8_t)0xae, (uint8_t)0x2d, (uint8_t)0x8a, (uint8_t)0x57, (uint8_t)0x1e, (uint8_t)0x03, (uint8_t)0xac, (uint8_t)0x9c, (uint8_t)0x9e, (uint8_t)0xb7, (uint8_t)0x6f, (uint8_t)0xac, (uint8_t)0x45, (uint8_t)0xaf, (uint8_t)0x8e, (uint8_t)0x51,
-                               (uint8_t)0x30, (uint8_t)0xc8, (uint8_t)0x1c, (uint8_t)0x46, (uint8_t)0xa3, (uint8_t)0x5c, (uint8_t)0xe4, (uint8_t)0x11, (uint8_t)0xe5, (uint8_t)0xfb, (uint8_t)0xc1, (uint8_t)0x19, (uint8_t)0x1a, (uint8_t)0x0a, (uint8_t)0x52, (uint8_t)0xef,
-                               (uint8_t)0xf6, (uint8_t)0x9f, (uint8_t)0x24, (uint8_t)0x45, (uint8_t)0xdf, (uint8_t)0x4f, (uint8_t)0x9b, (uint8_t)0x17, (uint8_t)0xad, (uint8_t)0x2b, (uint8_t)0x41, (uint8_t)0x7b, (uint8_t)0xe6, (uint8_t)0x6c, (uint8_t)0x37, (uint8_t)0x10 };
-    */
-    //uint8_t plain_text[64]  = "This is a secret nobody can know, please don't tell anyone o.k?";
+    uint8_t plain_text[64]  = "This is a secret nobody can know, please don't tell anyone o.k?";
 
-    uint8_t plain_text[16] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+    //uint8_t plain_text[16] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
     uint8_t cipher_text[64] = "";   
     uint8_t test_text[64] = "";     
     int text_length = sizeof(plain_text) / sizeof(uint8_t);
@@ -69,10 +65,11 @@ void scanAttack_top(){
     uint8_t guess_key[16];
     attack(guess_key, ctx);
 
-#ifdef _PRINT_ATTACK 
-    std::cout << "\nShort key: "; phex(key, sizeof(key) / sizeof(uint8_t));
-    std::cout << "\nRound key: "; phex(ctx.roundKey, sizeof(ctx.roundKey) / sizeof(uint8_t));
-    std::cout << "\nGuess Key :"; phex(guess_key, 16);
+#ifdef _PRINT_TEST
+    std::cout << "\nTesting the obtained key using a new AES oracle...";
+    std::cout << "\nShort key: \t"; phex(key, sizeof(key) / sizeof(uint8_t));
+    std::cout << "\nRound key: \t"; phex(ctx.roundKey, sizeof(ctx.roundKey) / sizeof(uint8_t));
+    std::cout << "\nGuess key: \t"; phex(guess_key, 16);
 #endif
 
     //---- TEST OF THE OBTAINED KEY -----
@@ -87,7 +84,7 @@ void scanAttack_top(){
     for (uint8_t i = 0; i < text_length / 16; ++i)
         ctx2.ECB_encrypt(test_text + (i * 16));
 
-#ifdef _PRINT_ATTACK 
+#ifdef _PRINT_TEST 
     std::cout << "\n\nRunning test...";
     std::cout << "\nOriginal Text: (0x16)"; phex(plain_text , text_length);
     std::cout << "\nCipher Text  : (0x16)"; phex(cipher_text, text_length);
@@ -207,9 +204,9 @@ std::vector<struct scan> scan_data(AES_ctx ctx) {
                 ui8_str02[i * 4 + j] = result.s_input[1];
 
 #ifdef _PRINT_SCAN
-                std::cout << "\ncount_t  :" << count_t << "\t i :" << i << "\t j :" << j;
-                std::cout << "\nREG_01   :"; phex((uint8_t*)ui8_str01, 16);
-                std::cout << "\nREG_02   :"; phex((uint8_t*)ui8_str02, 16);
+                std::cout << "\nIteration: " << count_t << "\t i :" << i << "\t j :" << j;
+                std::cout << "\nINPUT_01 :\t"; phex((uint8_t*)ui8_str01, 16);
+                std::cout << "\nINPUT_02 :\t"; phex((uint8_t*)ui8_str02, 16);
 #endif
 
                 ctx.AES_Cipher1R((uint8_t*) ui8_str01, txtLength);
@@ -222,9 +219,9 @@ std::vector<struct scan> scan_data(AES_ctx ctx) {
                 count = countbits(ui8_strOR, 16);
 
 #ifdef _PRINT_SCAN
-                std::cout << "\nREG_01(C):"; phex((uint8_t*)ui8_str01, 16);
-                std::cout << "\nREG_02(C):"; phex((uint8_t*)ui8_str02, 16);
-                std::cout << "\nXOR      :"; phex((uint8_t*)ui8_strOR, 16);
+                std::cout << "\nOUTPUT_01:\t"; phex((uint8_t*)ui8_str01, 16);
+                std::cout << "\nOUTPUT_02:\t"; phex((uint8_t*)ui8_str02, 16);
+                std::cout << "\nXOR      :\t"; phex((uint8_t*)ui8_strOR, 16);
                 std::cout << "\n";
 #endif
 
@@ -287,13 +284,14 @@ int countbits(uint8_t str[], int length) {
 
 void phex(uint8_t str[], int len)
 {   
+    cout << "\t";
     if (len ==1)
         printf("%.2x", (int) str);
     else
         for (int i = 0; i < len; ++i) {
-            if (i%16 == 0)
-                cout << "\n\t\t\t";
             printf("%.2x", str[i]);
+            if (i % 16 == 15 && i != len-1)
+                cout << "\n\t\t\t";
         }
 
 }
