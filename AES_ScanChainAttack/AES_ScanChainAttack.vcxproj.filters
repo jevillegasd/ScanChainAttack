@@ -18,9 +18,21 @@
     <ClInclude Include="ScanChainAttack.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="AES_ctx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="simpleSerial.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ScanChainAttack.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AES_ctx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="simpleSerial.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

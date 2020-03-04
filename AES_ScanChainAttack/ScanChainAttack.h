@@ -1,15 +1,17 @@
 #include <stdio.h>
 #include <time.h>
 
-
 #include <string>
+#include <chrono>
+#include <time.h> 
 #include <bitset> 
 #include <vector>
+#include "AES.h"
 
 #ifndef _SCAN_CHAIN
 	#define _SCAN_CHAIN
 	
-	void phex(uint8_t* str, int len);
+	void phex(uint8_t str[], int len);
 
 	void test1(struct AES_ctx ctx, uint8_t* plain_text, int length);
 	void test2(struct AES_ctx ctx);	

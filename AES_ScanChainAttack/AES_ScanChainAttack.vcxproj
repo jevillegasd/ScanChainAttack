@@ -148,10 +148,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AES_ctx.cpp" />
     <ClCompile Include="ScanChainAttack.cpp" />
+    <ClCompile Include="simpleSerial.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AES_ctx.h" />
     <ClInclude Include="ScanChainAttack.h" />
+    <ClInclude Include="simpleSerial.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
