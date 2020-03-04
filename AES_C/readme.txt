@@ -1,0 +1,1 @@
+This is a simple implementation of AES in EBC mode, ready to be exproted to hardware synthesis and includes a 1Round function.
