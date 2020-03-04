@@ -57,6 +57,7 @@ void scanAttack_top(){
                                (uint8_t)0xf6, (uint8_t)0x9f, (uint8_t)0x24, (uint8_t)0x45, (uint8_t)0xdf, (uint8_t)0x4f, (uint8_t)0x9b, (uint8_t)0x17, (uint8_t)0xad, (uint8_t)0x2b, (uint8_t)0x41, (uint8_t)0x7b, (uint8_t)0xe6, (uint8_t)0x6c, (uint8_t)0x37, (uint8_t)0x10 };
     */
     //uint8_t plain_text[64]  = "This is a secret nobody can know, please don't tell anyone o.k?";
+
     uint8_t plain_text[16] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
     uint8_t cipher_text[64] = "";   
     uint8_t test_text[64] = "";     
@@ -74,14 +75,14 @@ void scanAttack_top(){
     std::cout << "\nGuess Key :"; phex(guess_key, 16);
 #endif
 
-    //----------- Lets test what we got:
-    
+    //---- TEST OF THE OBTAINED KEY -----
+
     std::copy(begin(plain_text), std::end(plain_text), std::begin(cipher_text));
     for (uint8_t i = 0; i < text_length / 16; ++i)
-        ctx.ECB_encrypt(cipher_text + (i * 16));    //Encrypts a cipher text. plain_text now is encrypted and "safe"
+        ctx.ECB_encrypt(cipher_text + (i * 16));    //Encrypts a cipher text.
     std::copy(begin(cipher_text), std::end(cipher_text), std::begin(test_text));
  
-    AES_ctx ctx2(guess_key);    //Local AES oracle (only for the Cipher1R function)
+    AES_ctx ctx2(guess_key);    //Local AES oracle (malicious).
     
     for (uint8_t i = 0; i < text_length / 16; ++i)
         ctx2.ECB_encrypt(test_text + (i * 16));
