@@ -54,7 +54,7 @@ void AES_ctx::AES_Cipher1R(uint8_t plain_text[], int txt_Size) {
 		}
 	}
 	else {
-		Cipher_1R((state_t*)plain_text, this->roundKey);
+		Cipher_1R((state_t*) plain_text, this->roundKey );
 	}
 	return;
 }

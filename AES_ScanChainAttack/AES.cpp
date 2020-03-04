@@ -307,7 +307,7 @@ static void InvShiftRows(state_t* state){
 
 
 
-void Cipher(state_t* state, const uint8_t RoundKey[AES_keyExpSize])
+void Cipher(state_t* state,     const uint8_t RoundKey[AES_keyExpSize])
 {
     uint8_t round = 0;
 
@@ -332,7 +332,7 @@ void Cipher(state_t* state, const uint8_t RoundKey[AES_keyExpSize])
     AddRoundKey(Nr, state, RoundKey);
 }
 
-void Cipher_1R(state_t* state, const uint8_t RoundKey[AES_keyExpSize])
+void Cipher_1R(state_t* state,  const uint8_t RoundKey[AES_keyExpSize])
 {
     AddRoundKey(0, state, RoundKey);
     #ifdef _PRINT_CIPHER 
@@ -357,7 +357,7 @@ void Cipher_1R(state_t* state, const uint8_t RoundKey[AES_keyExpSize])
 
 }
 
-void InvCipher(state_t* state, const uint8_t RoundKey[AES_keyExpSize])
+void InvCipher(state_t* state,  const uint8_t RoundKey[AES_keyExpSize])
 {
     uint8_t round = Nr;
     InvAddRoundKey(Nr, state, RoundKey);
@@ -387,5 +387,9 @@ void AES_ECB_decrypt(AES_ctx ctx, uint8_t* buf){
     InvCipher((state_t*)buf, ctx.roundKey);
 }
 
+void AES_Cipher_1R(AES_ctx ctx, uint8_t* buf) {
+    // The next function call decrypts the PlainText with the Key using AES algorithm.
+    Cipher_1R((state_t*)buf, ctx.roundKey);
+}
 
 

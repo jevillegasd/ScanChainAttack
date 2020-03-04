@@ -148,6 +148,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AES.cpp" />
     <ClCompile Include="AES_ctx.cpp" />
     <ClCompile Include="ScanChainAttack.cpp" />
     <ClCompile Include="simpleSerial.cpp" />

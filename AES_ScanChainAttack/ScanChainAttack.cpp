@@ -2,8 +2,8 @@
 //Degubgging Macros
 
 //#define _PRINT_CIPHER
-#define _PRINT_SCAN
 //#define _PRINT_BRUTE
+#define _PRINT_SCAN
 #define _PRINT_ATTACK
 #define _PRINT_TEST
 
@@ -19,9 +19,11 @@
 
 
 #include"ScanChainAttack.h"
-#include"AES.cpp"
+#include"AES.h"
 #include"simpleSerial.h"
-
+#ifndef  state_t
+    typedef uint8_t state_t[4][4];
+#endif
 using namespace std;
 void scanAttack_top();
 
@@ -36,9 +38,9 @@ int main()
     AES_ctx ctx(key,port);
     uint8_t ui8_str[16];
     
-    std::cout << "\n 1R Test:";	phex((uint8_t*)plain_text, 16);
+    std::cout << "\n1R Test Input :\t";	phex((uint8_t*)plain_text, 16);
     ctx.AES_Cipher1R(plain_text, txt_Size);
-    std::cout << "\n Test:";	phex((uint8_t*)plain_text, 16);
+    std::cout << "\n1R Test output:\t";	phex((uint8_t*)plain_text, 16);
     ctx.close();
 
 
@@ -251,7 +253,7 @@ std::vector<struct scan> scan_data(AES_ctx ctx) {
 
             scan_options.push_back(result);
 
-#ifdef _PRINT_SCAN
+#ifdef _PRINT_ATTACK
             std::cout << "\nFound value for a" << i << j << " Input: ";
             phex((uint8_t*)result.s_input, 2);
             cout << ", Possibles b" << i << j << ": ";
@@ -260,7 +262,7 @@ std::vector<struct scan> scan_data(AES_ctx ctx) {
 #endif
         }
     }
-#ifdef _PRINT_SCAN
+#ifdef _PRINT_ATTACK
     std::cout << "\nAverage trials: " << tot / 16;
 #endif
     return scan_options;
@@ -303,7 +305,8 @@ void test1(AES_ctx ctx, uint8_t* plain_text, int length) {
     phex(plain_text, length);
 
     for (uint8_t i = 0; i < length/4; ++i)
-        AES_ECB_encrypt(ctx, plain_text + (i * 16));
+        ctx.ECB_encrypt(plain_text + (i * 16));
+        //AES_ECB_encrypt(ctx, plain_text + (i * 16));
 
     std::cout << "\nCiphertext: ";
     phex(plain_text, length);

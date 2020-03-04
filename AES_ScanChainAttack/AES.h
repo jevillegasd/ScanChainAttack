@@ -79,9 +79,11 @@ NOTE:   String length must be evenly divisible by 16byte (str_len % 16 == 0)
     void AES_init_ctx(AES_ctx ctx, const uint8_t key[]);
     
 
-   void AES_ECB_encrypt(const AES_ctx* ctx, uint8_t* buf);
+   void AES_ECB_encrypt( AES_ctx ctx, uint8_t* buf);
 
-   void AES_ECB_decrypt(const AES_ctx* ctx, uint8_t* buf);
+   void AES_ECB_decrypt( AES_ctx ctx, uint8_t* buf);
+
+   void AES_Cipher_1R(AES_ctx ctx, uint8_t* buf);
 
    void Cipher(state_t* state, const uint8_t RoundKey[AES_keyExpSize]);
    void InvCipher(state_t* state, const uint8_t RoundKey[AES_keyExpSize]);
