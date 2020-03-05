@@ -3,9 +3,9 @@
 
 //#define _PRINT_CIPHER
 //#define _PRINT_BRUTE
-#define _PRINT_SCAN
+//#define _PRINT_SCAN //Uncomment this one.
 #define _PRINT_ATTACK
-#define _PRINT_TEST
+//#define _PRINT_TEST
 
 #define STRICT
 #define WIN32_LEAN_AND_MEAN
@@ -30,6 +30,7 @@ void scanAttack_top();
 
 int main()
 {
+   /*//test if Comms are working
     uint8_t key[16] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
     uint8_t plain_text[16] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
     int txt_Size = sizeof(plain_text) / sizeof(uint8_t);
@@ -42,6 +43,7 @@ int main()
     ctx.AES_Cipher1R(plain_text, txt_Size);
     std::cout << "\n1R Test output:\t";	phex((uint8_t*)plain_text, 16);
     ctx.close();
+    */
 
 
     scanAttack_top();
@@ -53,7 +55,8 @@ void scanAttack_top(){
     std::cout << "\nRunning AES Scan Chain Attack...\n";
     //AES_ctx ctx, ctx2; //AES machine key, ctx2 is configurerd with the found key (malicious)
     //uint8_t key[16] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-    uint8_t key[16] = {0x2F, 0x7e, 0x15, 0x16, 0x28, 0xae, 0xAA, 0xa6, 0xab, 0xf7, 0x15, 0xFF, 0x09, 0xcf, 0x4f, 0x3c};
+    //uint8_t key[16] = {0x2F, 0x7e, 0x15, 0x16, 0x28, 0xae, 0xAA, 0xa6, 0xab, 0xf7, 0x15, 0xFF, 0x09, 0xcf, 0x4f, 0x3c};
+    uint8_t key[16] = "ABCDEFGHIJKLMNO";
     uint8_t plain_text[64]  = "This is a secret nobody can know, please don't tell anyone o.k?";
 
     //uint8_t plain_text[16] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
@@ -160,7 +163,7 @@ bool attack(uint8_t trial_key[], AES_ctx ctx) {
                 char str[26];
                 ctime_s(str, sizeof str, &end_time);
                 std::cout << "\nFinished computation at " << str
-                          << "\nElapsed time: " << elapsed_seconds.count() << "s. \n";
+                          << "Elapsed time: " << elapsed_seconds.count() << "s. \n";
 #endif
                 return 1;
             }

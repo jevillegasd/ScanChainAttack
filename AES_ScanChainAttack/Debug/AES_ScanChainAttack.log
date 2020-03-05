@@ -6,6 +6,5 @@ C:\Users\jev1\Documents\Repositories\NYU_HARD_SEC\ScanChainAttack\AES_ScanChainA
 C:\Users\jev1\Documents\Repositories\NYU_HARD_SEC\ScanChainAttack\AES_ScanChainAttack\AES_ctx.h(31): message : see declaration of 'AES_ctx'
 C:\Users\jev1\Documents\Repositories\NYU_HARD_SEC\ScanChainAttack\AES_ScanChainAttack\ScanChainAttack.h(31,48): warning C4099: 'AES_ctx': type name first seen using 'class' now seen using 'struct'
 C:\Users\jev1\Documents\Repositories\NYU_HARD_SEC\ScanChainAttack\AES_ScanChainAttack\AES_ctx.h(31): message : see declaration of 'AES_ctx'
-C:\Users\jev1\Documents\Repositories\NYU_HARD_SEC\ScanChainAttack\AES_ScanChainAttack\ScanChainAttack.cpp(39,13): warning C4101: 'ui8_str': unreferenced local variable
-C:\Users\jev1\Documents\Repositories\NYU_HARD_SEC\ScanChainAttack\AES_ScanChainAttack\ScanChainAttack.cpp(192,15): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+C:\Users\jev1\Documents\Repositories\NYU_HARD_SEC\ScanChainAttack\AES_ScanChainAttack\ScanChainAttack.cpp(195,15): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
   AES_ScanChainAttack.vcxproj -> C:\Users\jev1\Documents\Repositories\NYU_HARD_SEC\ScanChainAttack\AES_ScanChainAttack\Debug\ScanChainAttack.exe
