@@ -5,7 +5,7 @@
 //#define _PRINT_BRUTE
 //#define _PRINT_SCAN //Uncomment this one.
 #define _PRINT_ATTACK
-//#define _PRINT_TEST
+#define _PRINT_TEST
 
 #define STRICT
 #define WIN32_LEAN_AND_MEAN
@@ -30,12 +30,12 @@ void scanAttack_top();
 
 int main()
 {
-   /*//test if Comms are working
+   /*//test if Comms are working*/
     uint8_t key[16] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
     uint8_t plain_text[16] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
     int txt_Size = sizeof(plain_text) / sizeof(uint8_t);
 
-    char port[128] = "\\\\.\\COM5";
+    char port[128] = "\\\\.\\COM6";
     AES_ctx ctx(key,port);
     uint8_t ui8_str[16];
     
@@ -43,7 +43,7 @@ int main()
     ctx.AES_Cipher1R(plain_text, txt_Size);
     std::cout << "\n1R Test output:\t";	phex((uint8_t*)plain_text, 16);
     ctx.close();
-    */
+    
 
 
     scanAttack_top();
@@ -56,7 +56,9 @@ void scanAttack_top(){
     //AES_ctx ctx, ctx2; //AES machine key, ctx2 is configurerd with the found key (malicious)
     //uint8_t key[16] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
     //uint8_t key[16] = {0x2F, 0x7e, 0x15, 0x16, 0x28, 0xae, 0xAA, 0xa6, 0xab, 0xf7, 0x15, 0xFF, 0x09, 0xcf, 0x4f, 0x3c};
-    uint8_t key[16] = "ABCDEFGHIJKLMNO";
+    //uint8_t key[16] = {0x12, 0x34, 0x56, 0x78, 0x12, 0x34, 0x56, 0x78, 0x12, 0x34, 0x56, 0x78, 0x12, 0x34, 0x56, 0x78};
+    //uint8_t key[16] = {0x16, 0x69, 0x49, 0x52, 0x16, 0x69, 0x49, 0x52, 0x16, 0x69, 0x49, 0x52, 0x16, 0x69, 0x49, 0x52};
+    uint8_t key[16] = {0x16, 0x66, 0x47, 0x38, 0x16, 0x66, 0x47, 0x38, 0x16, 0x66, 0x47, 0x38, 0x16, 0x66, 0x47, 0x38};
     uint8_t plain_text[64]  = "This is a secret nobody can know, please don't tell anyone o.k?";
 
     //uint8_t plain_text[16] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
@@ -64,7 +66,7 @@ void scanAttack_top(){
     uint8_t test_text[64] = "";     
     int text_length = sizeof(plain_text) / sizeof(uint8_t);
     
-    char port[128] = "\\\\.\\COM5";
+    char port[128] = "\\\\.\\COM6";
     AES_ctx ctx(key, port); //Remote (FPGA) AES oracle (only for the Cipher1R function)
 
     uint8_t guess_key[16];
@@ -72,9 +74,9 @@ void scanAttack_top(){
 
 #ifdef _PRINT_TEST
     std::cout << "\nTesting the obtained key using a new AES oracle...";
-    std::cout << "\nShort key: \t"; phex(key, sizeof(key) / sizeof(uint8_t));
+    std::cout << "\n\nShort key: \t"; phex(key, sizeof(key) / sizeof(uint8_t));
     std::cout << "\nRound key: \t"; phex(ctx.roundKey, sizeof(ctx.roundKey) / sizeof(uint8_t));
-    std::cout << "\nGuess key: \t"; phex(guess_key, 16);
+    std::cout << "\n\nGuess key: \t"; phex(guess_key, 16);
 #endif
 
     //---- TEST OF THE OBTAINED KEY -----
